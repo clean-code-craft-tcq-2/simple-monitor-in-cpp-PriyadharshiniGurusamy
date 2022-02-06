@@ -2,18 +2,48 @@
 #include <iostream>
 using namespace std;
 
-bool batteryIsOk(float temperature, float soc, float chargeRate) {
-  if(temperature < 0 || temperature > 45) {
-    cout << "Temperature out of range!\n";
-    return false;
-  } else if(soc < 20 || soc > 80) {
-    cout << "State of Charge out of range!\n";
-    return false;
-  } else if(chargeRate > 0.8) {
-    cout << "Charge Rate out of range!\n";
-    return false;
+std::string TempWarning = "Temperature out of range!";
+std::string SocWarning = "State of Charge out of range!";
+std::string RateofChargeWarning = "Charge Rate out of range!";
+
+void PrintWarning(std::string warning)
+{
+    cout << warning << "\n";
+}
+
+bool TempCheck(float temperature)
+{
+    bool retVal = (temperature < 0 || temperature > 45)? false: true;
+    return retVal;
+}
+
+bool SocCheck(float soc)
+{
+    bool retVal = (soc < 20 || soc > 80)? false: true;
+    return retVal;
+}
+
+bool ChargeRateCheck(float chargeRate)
+{
+    bool retVal = (chargeRate > 0.8)? false: true;
+    return retVal;
+}
+
+bool BatteryValuesisOK(float value, bool (*Validation)(float), std::string Warning)
+{
+    bool retVal = Validation(value);
+    if(!retVal) {
+    PrintWarning(Warning);
   }
-  return true;
+  return retVal;
+  
+}
+
+bool batteryIsOk(float temperature, float soc, float chargeRate) {
+    bool retVal =  BatteryValuesisOK(temperature, TempCheck, TempWarning);
+    retVal =  retVal && BatteryValuesisOK(soc, SocCheck, SocWarning);
+    retVal =  retVal && BatteryValuesisOK(chargeRate, ChargeRateCheck, RateofChargeWarning);
+  return retVal;
 }
 
 int main() {
